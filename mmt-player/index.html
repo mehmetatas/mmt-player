@@ -3,842 +3,114 @@
 <head>
     <meta charset="utf-8">
     <title>Drop File/Folder</title>
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-    <script src="slimscroll/jquery.slimscroll.js"></script>
-    <script src="slimscroll/angular-slimscroll.js"></script>
+
     <script src="rzslider/rzslider.min.js"></script>
-	<script src="id3reader/id3-minimized.js"></script>
-	
-    <link href="rzslider/rzslider.css" rel="stylesheet" />
+    <script src="id3reader/id3-minimized.js"></script>
+    <script src="slimscroll/ngSlimscroll.min.js"></script>
+
+    <link href="css/style.css" rel="stylesheet"/>
+    <link href="rzslider/rzslider.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-
-    <style type="text/css">
-        html, body {
-            padding: 0;
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            font-family: Arial;
-            font-size: 14pt;
-        }
-
-        a, a:hover, a:visited {
-            text-decoration: none;
-            color: #4cdcf5;
-        }
-
-        input[type=file] {
-            display: none;
-        }
-
-        .player {
-            background-color: #1c3436;
-            color: #4cdcf5;
-            width: 400px;
-            height: 100%;
-            float: left;
-        }
-
-            .player > div {
-                height: 180px;
-                padding: 10px;
-                box-sizing: border-box;
-            }
-
-                .player > div span.playingTitle,
-				.player > div span.playingArtist {
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                    overflow-x: hidden;
-                    display: block;
-					max-width: 290px;
-					font-size: 0.9em;
-                }
-
-                .player > div span.playingArtist {
-					font-size: 0.7em;
-					font-style: italic;
-                }
-
-                .player > div .fa {
-                    box-shadow: 0 0 0.4em #08f;
-                    box-sizing: border-box;
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 12px;
-                    padding: 4px 6px;
-                    font-size: 0.8em;
-                    margin: 3px;
-                }
-
-                    .player > div .fa:hover {
-                        box-shadow: 0 0 0.6em #4cdcf5;
-                    }
-
-                    .player > div .fa.active {
-                        box-shadow: 0 0 0.6em #0f8;
-                    }
-
-                .player > div .fa-play,
-                .player > div .fa-pause {
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 16px;
-                    font-size: 0.9em;
-                }
-
-                .player > div .fa-play {
-                    padding: 8px 10px;
-                }
-
-                .player > div .fa-pause {
-                    padding: 8px 9px;
-                }
-
-                .player > div .fa-forward {
-                    padding: 4px 7px;
-                }
-
-                .player > div .fa-backward {
-                    padding: 4px 4px;
-                }
-
-                .player > div .fa-random {
-                    padding: 4px 5px;
-                }
-
-            .player .slimScrollDiv > ul {
-                padding: 0;
-                margin: 0;
-                overflow-y: auto;
-                overflow-x: hidden;
-                max-height: 100%;
-            }
-
-                .player .slimScrollDiv > ul > li {
-                    list-style: none;
-                    border-bottom: 1px solid rgba(76, 220, 245, 0.2);
-                    padding: 5px;
-                    height: 20px;
-                }
-
-                    .player .slimScrollDiv > ul > li.active {
-                        background-color: #0298b3;
-                    }
-
-                        .player .slimScrollDiv > ul > li > a > span.info {
-                            white-space: nowrap;
-                            text-overflow: ellipsis;
-                            overflow-x: hidden;
-                            display: block;
-                            width: calc(100% - 50px);
-                            float: left;
-							font-size: 0.8em;
-                        }
-
-                        .player .slimScrollDiv > ul > li > a > span.info > span.title {
-							font-weight: 600;
-                        }
-
-                        .player .slimScrollDiv > ul > li > a > span.info > span.artist {
-							font-weight: 300;
-							font-style: italic;
-							font-size: 0.7em;
-                        }
-
-                        .player .slimScrollDiv > ul > li > a > span.duration {
-                            float: right;
-							font-size: 0.8em;
-                        }
-
-        .slimScrollDiv {
-            max-height: calc(100% - 200px);
-            margin-bottom: -200px;
-        }
-    </style>
 </head>
-<body>
-    <div id="player" class="player" ng-controller="player">
-        <div>
-			<table style="width: 380px">
-				<tr style="height: 50px">
-					<td rowspan="2">
-						<img ng-src="{{current.meta.picture || defaultImg}}" style="width: 80px; height: 80px" />
-					</td>
-					<td>
-						<span class="playingTitle" ng-if="current.meta.title" ng-bind="current.meta.title"></span>
-						<span class="playingArtist" ng-if="current.meta.artist" ng-bind="'by ' + current.meta.artist"></span>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<table style="width: 290px; font-size: 0.7em; margin-bottom: 20px">
-							<tr>
-								<td style="width: 40px">{{timeSlider.currentText}}</td>
-								<td>
-									<rzslider rz-slider-model="timeSlider.current"
-											  rz-slider-floor="0"
-											  rz-slider-ceil="timeSlider.duration"
-											  rz-slider-on-change="setCurrentTime()"
-											  rz-slider-hide-limit-labels="true">
-									</rzslider>
-								</td>
-								<td style="width: 40px; text-align: right">{{timeSlider.durationText}}</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</table>
-			
-            <div>
-                <input id="addFolders" type="file" multiple webkitdirectory>
-                <input id="addFiles" type="file" multiple>
-                <audio id="audio">
-                    <source id="source" type="audio/mpeg" />
-                </audio>
-                <audio id="meta-audio">
-                    <source id="meta-source" type="audio/mpeg"/>
-                </audio>
-                
-                <span style="float: left">
-                    <a href ng-click="toggleShuffle()"><i class="fa fa-random" ng-class="{'active' : shuffle }"></i></a>
-                    <a href ng-click="toggleRepeat()"><i class="fa fa-repeat" ng-class="{'active' : repeat }"></i></a>
+<body ng-controller="player">
 
-                    <span style="text-align: center; margin-left: 15px">
-                        <a href ng-click="prev()" ng-disabled="!files.length"><i class="fa fa-backward"></i></a>
-                        <a href ng-click="playPause()" ng-disabled="!current || !current.active"><i class="fa" ng-class="state === 1 ? 'fa-pause' : 'fa-play'"></i></a>
-                        <a href ng-click="next(true)" ng-disabled="!files.length"><i class="fa fa-forward"></i></a>
+<div id="dropzone" class="full-height">
+    <div class="player">
+        <div class="header-meta clearfix">
+            <div class="cover">
+                <img ng-src="{{current.meta.picture || defaultImg}}"/>
+            </div>
+            <div class="info2">
+                <div class="info">
+                    <span class="title" ng-if="current.meta.title" ng-bind="current.meta.title"></span>
+                    <span class="artist" ng-if="current.meta.artist"
+                          ng-bind="'by ' + current.meta.artist + (current.meta.album ? ' @' + current.meta.album : '')"></span>
+                </div>
+                <div class="time">
+                    <span class="current">{{timeSlider.currentText}}</span>
+                    <span class="slider">
+                        <rzslider rz-slider-model="timeSlider.current"
+                                  rz-slider-floor="0"
+                                  rz-slider-ceil="timeSlider.duration"
+                                  rz-slider-on-change="setCurrentTime()"
+                                  rz-slider-hide-limit-labels="true">
+                        </rzslider>
                     </span>
-                </span>
+                    <span class="total">{{timeSlider.durationText}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-controls clearfix">
+            <div class="buttons">
+                <a href class="btn" ng-click="toggleShuffle()"><i class="fa fa-random"
+                                                                  ng-class="{'active' : shuffle }"></i></a>
+                <a href class="btn" ng-click="toggleRepeat()"><i class="fa fa-repeat"
+                                                                 ng-class="{'active' : repeat }"></i></a>
 
-                <span style="float: right">
-                    <rzslider style="width: 120px"
-                              rz-slider-model="volume"
+                    <span class="player-buttons">
+                        <a href class="btn" ng-click="prev()" ng-disabled="!files.length"><i class="fa fa-backward"></i></a>
+                        <a href class="btn" ng-click="playPause()" ng-disabled="!current || !current.active"><i
+                                class="fa"
+                                ng-class="state === 1 ? 'fa-pause' : 'fa-play'"></i></a>
+                        <a href class="btn" ng-click="next(true)" ng-disabled="!files.length"><i
+                                class="fa fa-forward"></i></a>
+                    </span>
+            </div>
+            <div class="volume">
+                <span class="slider">
+                    <rzslider rz-slider-model="volume"
                               rz-slider-floor="0"
                               rz-slider-ceil="100"
                               rz-slider-hide-limit-labels="true">
                     </rzslider>
-                    <a href ng-click="toggleMute()"><i class="fa" ng-class="muted ? 'fa-volume-off' : 'fa-volume-up'"></i></a>
                 </span>
-
-                <div style="clear: both"></div>
-                <hr style="border-color: rgba(76, 220, 245, 0.2)"/>
+                <a href class="btn" ng-click="toggleMute()">
+                    <i class="fa" ng-class="muted ? 'fa-volume-off' : 'fa-volume-up'"></i>
+                </a>
             </div>
+
         </div>
 
-        <ul id="list" slimscroll="{height: '100%'}">
-            <li ng-repeat="file in files" ng-class="{'active': file.active}">
-                <a href ng-click="play(file)">
-                    <span class="info">
-						<span class="title" ng-bind="($index + 1) + '. ' + file.meta.title"></span>
-						<span class="artist" ng-if="file.meta.artist" ng-bind="'by ' + file.meta.artist"></span>
-					</span>
-					<span class="duration" ng-bind="file.durationText"></span>
-                </a>
-            </li>
-        </ul>
-	
-		<a href style="position: absolute; bottom: 5px; left: 375px" ng-click="openAddFiles()"><i class="fa fa-file" ng-class="{'active' : shuffle }"></i></a>
-		<a href style="position: absolute; bottom: 5px; left: 350px" ng-click="openAddFolders()"><i class="fa fa-folder" ng-class="{'active' : shuffle }"></i></a>
+        <hr/>
+
+        <div id="list" class="playlist">
+            <a class="item" ng-repeat="file in files" ng-class="{'active': file.active}" href ng-click="play(file)">
+                <div class="info">
+                    <span class="title" ng-bind="($index + 1) + '. ' + file.meta.title"></span>
+                    <span class="artist" ng-if="file.meta.artist" ng-bind="'by ' + file.meta.artist"></span>
+                </div>
+                <div class="duration" ng-bind="file.durationText"></div>
+            </a>
+        </div>
+
+        <hr/>
+
+        <div id="footer">
+            <a href class="btn footer-btn" ng-click="openAddFiles()">
+                <i class="fa fa-file"></i>
+            </a>
+            <a href class="btn footer-btn" ng-click="openAddFolders()">
+                <i class="fa fa-folder"></i>
+            </a>
+        </div>
     </div>
-
-    <script type="text/javascript">
-        function formatTime(seconds) {
-            var sec = seconds % 60;
-            var min = Math.floor(seconds / 60);
-
-            var text = "";
-
-            if (min < 10) {
-                text += "0";
-            }
-            text += min + ":";
-
-            if (sec < 10) {
-                text += "0";
-            }
-            text += sec;
-
-            return text;
-        }
-
-        angular.module('app', ['rzModule', 'ui.slimscroll']).controller('player', ['$scope', function ($scope) {
-            var __paused = 0;
-            var __playing = 1;
-
-            var _index = 0;
-            var _order = [];
-
-            var _fileHelper = new FileHelper($scope);
-            var _player = new Player(_fileHelper);
-            var _metaHelper = new MetadataHelper();
-
-            var updateOrder = function () {
-                _order = [];
-                _index = 0;
-
-                for (var i = 0; i < $scope.files.length; i++) {
-                    _order[i] = i;
-                }
-
-                if ($scope.shuffle) {
-                    var x = 5 * _order.length;
-                    while (x-- > 0) {
-                        var i1 = Math.floor(Math.random() * _order.length);
-                        var i2 = Math.floor(Math.random() * _order.length);
-                        var tmp = _order[i1];
-                        _order[i1] = _order[i2];
-                        _order[i2] = tmp;
-                    }
-                };
-            };
-			
-			var move = function(next) {
-				var check = $scope.files.length - 1;
-				var set = 0;
-				var step = 1;
-				
-				if (!next) {
-					check = 0;
-					set = $scope.files.length - 1;
-					step = -1;
-				}
-			
-				if ($scope.files.length === 0) {
-                    return;
-                }
-				
-                if (_index === check) {
-                    if ($scope.repeat) {
-                        if ($scope.shuffle) {
-                            updateOrder();
-                        } 
-						else {
-							_index = set;
-						}
-                    } else {
-                        return;
-                    }
-                } else {
-                    _index += step;
-                }
-
-                var i = _order[_index];
-
-                $("#list").slimScroll({ scrollTo: i * 31 - $("#list").height() / 2, animate: true });
-
-                $scope.play($scope.files[i]);
-			};
-			
-			$scope.defaultImg = 'img/default.png';
-
-            $scope.state = -1;
-            $scope.current = null;
-            $scope.shuffle = false;
-            $scope.repeat = false;
-            $scope.muted = false;
-
-            $scope.volume = 100;
-
-            $scope.timeSlider = {
-                current: 0,
-                duration: 0,
-                durationText: "??:??",
-                currentText: "00:00"
-            };
-
-            $scope.files = [];
-
-            $scope.playPause = function () {
-                if (!$scope.current) {
-                    if ($scope.files.length === 0) {
-                        return;
-                    }
-                    updateOrder();
-                    $scope.play($scope.files[_order[_index]]);
-                }
-                else if ($scope.state === __playing) {
-                    $scope.pause();
-                } else {
-                    $scope.play($scope.current);
-                }
-            };
-
-            $scope.updateTime = function () {
-                $scope.timeSlider.current = _player.getCurrentTime();
-                $scope.timeSlider.currentText = formatTime($scope.timeSlider.current);
-                $scope.$apply();
-            };
-
-            $scope.setCurrentTime = function () {
-                _player.setCurrentTime($scope.timeSlider.current);
-                $scope.timeSlider.currentText = formatTime($scope.timeSlider.current);
-            };
-
-            $scope.$watch('volume', function () {
-                _player.setVolume($scope.volume);
-            });
-
-            $scope.toggleMute = function () {
-                $scope.muted = _player.toggleMute();
-            };
-
-            $scope.play = function (file, fromUI) {
-                if ($scope.current === file) {
-                    _player.play();
-                    $scope.current.active = true;
-                    $scope.state = __playing;
-                    return;
-                }
-
-                if ($scope.current) {
-                    $scope.current.active = false;
-                }
-
-                _player.play(file, function () {
-                    if (!file.duration) {
-                        file.setDuration(_player.getDuration());
-                    }
-
-                    $scope.timeSlider.current = 0;
-                    $scope.timeSlider.currentText = "00:00";
-                    $scope.timeSlider.duration = file.duration;
-                    $scope.timeSlider.durationText = file.durationText;
-
-                    $scope.$apply();
-                });
-
-                $scope.current = file;
-                $scope.current.active = true;
-				
-				if (!$scope.shuffle) {
-					_index = $scope.files.indexOf($scope.current);
-				}
-				
-                $scope.state = __playing;
-            };
-
-            $scope.pause = function () {
-                _player.pause();
-                $scope.state = __paused;
-            };			
-
-            $scope.next = function (fromUI) {
-                move(true);
-
-                if (!fromUI) {
-                    $scope.$apply();
-                }
-            };
-
-            $scope.prev = function () {
-                move(false);
-            };
-
-            $scope.toggleShuffle = function () {
-                $scope.shuffle = !$scope.shuffle;
-				
-				if ($scope.shuffle) {
-					updateOrder();
-				}
-				
-				var index = $scope.files.indexOf($scope.current);
-				
-				if (index > 0) {
-					_order.splice(_order.indexOf(index), 1);
-					_order.splice(0, 0, index);
-				}
-            };
-
-            $scope.toggleRepeat = function () {
-                $scope.repeat = !$scope.repeat;
-            };
-
-            $scope.addFile = function (file) {
-                if (file.name.indexOf(".mp3") > 0) {
-                    $scope.files.push(file);
-                    _metaHelper.pushFile(file, function(){
-						$scope.$apply();
-					});
-                    updateOrder();
-                    $scope.$apply();
-                }
-            };
-
-            $scope.removeFile = function (file) {
-                $scope.files.remove(file);
-                updateOrder();
-            };
-			
-			$scope.openAddFiles = function() {
-				$('#addFiles').click();
-			};
-			
-			$scope.openAddFolders = function() {
-				$('#addFolders').click();
-			};
-
-            // Init
-            _player.onEnd($scope.next);
-            _player.onTick($scope.updateTime);
-            _fileHelper.init();
-        }]);
-
-        function Player() {
-            var _current;
-
-            var _audio = document.getElementById("audio");
-            var _source = document.getElementById("source");
-
-            var _metadataListener;
-
-            _audio.addEventListener('loadedmetadata', function () {
-                if (_metadataListener) {
-                    _metadataListener();
-                }
-            });
-
-            this.play = function (file, callback) {
-                _metadataListener = callback;
-
-                if (file) {
-                    if (_current) {
-                        var prev = _current;
-                        setTimeout(function () {
-                            prev.removeFromTemp();
-                        }, 1000);
-                    }
-
-                    file.copyToTemp(function () {
-                        _source.src = file.getTempUrl();
-                        _audio.load();
-                        _audio.play();
-
-                        _current = file;
-                    });
-                } else {
-                    _audio.play();
-                }
-            };
-
-            this.pause = function () {
-                _audio.pause();
-            };
-
-            this.toggleMute = function () {
-                return _audio.muted = !_audio.muted;
-            };
-
-            this.setVolume = function (volume) {
-                _audio.volume = volume / 100.0;
-            };
-
-            this.getCurrentTime = function () {
-                return Math.round(_audio.currentTime);
-            };
-
-            this.setCurrentTime = function (time) {
-                _audio.currentTime = time;
-            };
-
-            this.getDuration = function () {
-                return Math.round(_audio.duration);
-            };
-
-            this.onEnd = function (endListener) {
-                _audio.addEventListener("ended", endListener);
-            };
-
-            this.onTick = function (tickListener) {
-                _audio.addEventListener("timeupdate", tickListener);
-            };
-        }
-
-        function MetadataHelper() {
-            var _files = [];
-            var _loading = false;
-
-            var _metaAudio = document.getElementById("meta-audio");
-            var _metaSource = document.getElementById("meta-source");
-
-            _metaAudio.onerror = function () {
-                _loading = false;
-            };
-			
-			var loadID3Tags = function(file, callback) {
-				file.getFileData(function (fileData) {
-					ID3.loadTags(fileData.name, function() {
-
-						var tags = ID3.getAllTags(fileData.name);
-
-						file.meta.title = tags.title || fileData.name;
-						file.meta.artist = tags.artist;
-						file.meta.album = tags.album;
-						
-						if(tags.picture && tags.picture.data && tags.picture.data.length) {
-							var image = tags.picture;
-							
-							var base64String = "";
-							
-							for (var j = 0; j < image.data.length; j++) {
-								base64String += String.fromCharCode(image.data[j]);
-							}
-							
-							file.meta.picture = "data:" + image.format + ";base64," + window.btoa(base64String);
-						}
-							
-						callback();
-					}, {
-						tags: ["artist", "title", "album", "picture"],
-						dataReader: FileAPIReader(fileData)
-					});
-			   });
-			};
-			
-			var loadDuration = function (file, callback) {
-				file.copyToTemp(function () {
-					_metaSource.src = file.getTempUrl();
-					_metaAudio.load();
-
-					_metaAudio.onloadedmetadata = function () {
-						file.setDuration(Math.round(_metaAudio.duration));
-						file.removeFromTemp();
-
-						callback();
-					};
-				});
-			};
-
-            this.pushFile = function (file, callback) {
-                _files.push({
-                    file: file,
-                    callback: callback
-                });
-            };
-
-            setInterval(function () {
-                if (_files.length === 0 || _loading) {
-                    return;
-                }
-
-                var item = _files.splice(0, 1)[0];
-
-                if (item.file.duration) {
-                    return;
-                }
-
-                _loading = true;
-				
-				loadID3Tags(item.file, function() {
-					loadDuration(item.file, function() {
-						_loading = false;
-						item.callback();
-					});
-				});
-
-            }, 100);
-        }
-
-        function FileHelper(scope) {
-            window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-            window.resolveLocalFileSystemURL = window.webkitResolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
-
-            var _self = this;
-
-            var fs = null;
-            var cwd = null;
-
-            function onError(e) {
-                console.log("ERROR:" + e.code + ", " + e.name + ", " + e.message);
-            }
-
-            function getEntry(fullPath, callback) {
-                var fsUrl = fs.root.toURL() + encodeURIComponent(fullPath);
-
-                window.resolveLocalFileSystemURL(fsUrl, function (entry) {
-                    if (entry.isDirectory) {
-                        cwd = entry;
-                    }
-                    callback(entry);
-                });
-            }
-
-            function onChange(e) {
-                e.stopPropagation();
-                e.preventDefault();
-
-                var entries = e.target.webkitEntries;
-
-                // Dragging and dropping into the file input works fine but onchange doesn't
-                // populate .webkitEntries when selecting from the file dialog
-                // (crbug.com/138987). Thus, we need to explicitly write out files.
-                if (entries.length) {
-                    [].forEach.call(entries, function (entry) {
-                        if (entry.isFile) {
-                            scope.addFile(new DraggedFile(entry, _self));
-                        }
-                    });
-                } else {
-                    var files = e.target.files;
-
-                    [].forEach.call(files, function (file) {
-                        scope.addFile(new SelectedFile(file, _self));
-                    });
-                }
-            }
-
-            function traverseFileTree(item, path) {
-                path = path || "";
-                if (item.isFile) {
-                    scope.addFile(new DraggedFile(item, _self));
-                } else if (item.isDirectory) {
-                    var dirReader = item.createReader();
-                    dirReader.readEntries(function (entries) {
-                        for (var i = 0; i < entries.length; i++) {
-                            traverseFileTree(entries[i], path + item.name + "/");
-                        }
-                    });
-                }
-            }
-
-            this.copyToTemp = function (item, callback) {
-                item.copyTo(cwd, null, function (copiedEntry) {
-                    getEntry(copiedEntry.fullPath, function () {
-                        callback(copiedEntry);
-                    });
-                }, onError);
-            }
-
-            this.removeFromTemp = function (file) {
-                getEntry(file.fullPath, function (entry) {
-                    entry.remove(function () { }, onError);
-                });
-            };
-
-            this.writeFile = function (file, callback) {
-                cwd.getFile(file.name, { create: true }, function (fileEntry) {
-                    fileEntry.createWriter(function (writer) {
-                        writer.onwriteend = function () { 
-							callback(fileEntry);
-						};
-                        writer.onerror = function () { };
-                        writer.write(file);
-
-                    }, onError);
-                }, onError);
-            };
-
-            this.init = function () {
-                document.getElementById('addFiles').addEventListener('change', onChange);
-                document.getElementById('addFolders').addEventListener('change', onChange);
-
-                window.requestFileSystem(window.TEMPORARY, 1024 * 1204, function (fileSystem) {
-                    fs = fileSystem;
-                    cwd = fs.root;
-                }, onError);
-
-                var dropzone = document.getElementById('player');
-
-                dropzone.addEventListener('dragover', function (e) {
-                    e.preventDefault();
-                });
-
-                dropzone.addEventListener('drop', function (e) {
-                    e.preventDefault();
-
-                    var items = e.dataTransfer.items;
-                    for (var i = 0; i < items.length; i++) {
-                        var item = items[i].webkitGetAsEntry();
-                        if (item) {
-                            traverseFileTree(item);
-                        }
-                    }
-                });
-            };
-        }
-
-		function File(fileHandle, fileHelper) {
-            this.localEntry = null;
-			
-			this.meta = {
-				artist: null,
-				title: fileHandle.name,
-				album: null,
-				picture: "img/default.png"
-			};
-			
-            this.duration = 0;
-            this.durationText = "??:??";
-            this.fileHelper = fileHelper;
-            this.name = fileHandle.name;
-		}
-		
-		File.prototype.setDuration = function (seconds) {
-			this.duration = seconds;
-			this.durationText = formatTime(seconds);
-		};
-
-		File.prototype.getTempUrl = function () {
-			return this.localEntry.toURL();
-		};
-		
-		File.prototype.removeFromTemp = function () {
-			this.localEntry.remove(
-				function () {
-
-				},
-				function (e) {
-					console.log("ERROR:" + e.code + ", " + e.name + ", " + e.message);
-				});
-		};
-
-		File.prototype.copyToTemp = function (callback) {
-			console.log("ERROR: Not implemented!"); 
-		};
-
-		File.prototype.getFileData = function (callback) {
-			console.log("ERROR: Not implemented!"); 
-		};
-		
-        function DraggedFile(fileEntry, fileHelper) {
-			File.call(this, fileEntry, fileHelper);
-			
-            this.fileEntry = fileEntry;
-        }
-		
-		DraggedFile.prototype = Object.create(File.prototype);
-			
-		DraggedFile.prototype.copyToTemp = function (callback) {
-			this.fileHelper.copyToTemp(this.fileEntry, function (entry) {
-				this.localEntry = entry;
-				callback();
-			}.bind(this));
-		};
-
-		DraggedFile.prototype.getFileData = function (callback) {
-			this.fileEntry.file(callback);
-		};
-		
-        function SelectedFile(fileHandle, fileHelper) {
-			File.call(this, fileHandle, fileHelper);
-			
-            this.fileHandle = fileHandle;
-        }
-		
-		SelectedFile.prototype = Object.create(File.prototype);
-			
-		SelectedFile.prototype.copyToTemp = function (callback) {
-			this.fileHelper.writeFile(this.fileHandle, function (entry) {
-				this.localEntry = entry;
-				callback();
-			}.bind(this));
-		};
-
-		SelectedFile.prototype.getFileData = function (callback) {
-			callback(this.fileHandle);
-		};
-
-    </script>
+</div>
+
+<input id="addFolders" type="file" multiple webkitdirectory>
+<input id="addFiles" type="file" multiple>
+<audio id="audio">
+    <source id="source" type="audio/mpeg"/>
+</audio>
+<audio id="meta-audio">
+    <source id="meta-source" type="audio/mpeg"/>
+</audio>
+
+<script src="js/Utils.js"></script>
+<script src="js/Controller.js"></script>
+<script src="js/Player.js"></script>
+<script src="js/MetadataHelper.js"></script>
+<script src="js/FileHelper.js"></script>
+<script src="js/File.js"></script>
 </body>
 </html>

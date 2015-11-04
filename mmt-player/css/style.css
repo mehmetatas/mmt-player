@@ -1,0 +1,306 @@
+/* resets */
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+.clearfix:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-family: sans-serif;
+    font-size: 14pt;
+}
+
+hr {
+    margin: 0;
+    border-color: rgba(76, 220, 245, 0.2);
+}
+
+/* grid */
+.row {
+    margin: 0;
+    padding: 0;
+}
+
+.row [class*="col-"] {
+    margin: 0;
+    padding: 0;
+}
+
+@media all and ( min-width: 300px ) {
+    /* 12 cols */
+    .col-1-12 {
+        float: left;
+        width: 8.333333333333334%;
+    }
+
+    .col-2-12 {
+        float: left;
+        width: 16.666666666666668%;
+    }
+
+    .col-3-12 {
+        float: left;
+        width: 25%;
+    }
+
+    .col-4-12 {
+        float: left;
+        width: 33.333333333333336%;
+    }
+
+    .col-5-12 {
+        float: left;
+        width: 41.66666666666667%;
+    }
+
+    .col-6-12 {
+        float: left;
+        width: 50%;
+    }
+
+    .col-7-12 {
+        float: left;
+        width: 58.333333333333336%;
+    }
+
+    .col-8-12 {
+        float: left;
+        width: 66.66666666666667%;
+    }
+
+    .col-9-12 {
+        float: left;
+        width: 75%;
+    }
+
+    .col-10-12 {
+        float: left;
+        width: 83.33333333333334%;
+    }
+
+    .col-11-12 {
+        float: left;
+        width: 91.66666666666667%;
+    }
+
+    .col-12-12 {
+        float: left;
+        width: 100%;
+    }
+}
+
+a, a:hover, a:visited {
+    text-decoration: none;
+    color: #4cdcf5;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+input[type=file] {
+    display: none;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.player {
+    margin: 0;
+    padding: 0;
+    background-color: #1c3436;
+    color: #4cdcf5;
+    height: 100%;
+    max-width: 50%;
+    min-width: 400px;
+}
+
+.header-meta {
+    height: 90px;
+}
+
+.header-meta .cover {
+    width: 80px;
+    height: 80px;
+    padding: 5px;
+    float: left;
+}
+
+.header-meta .info2 {
+    height: 80px;
+    width: calc(100% - 80px);
+    float: left;
+}
+
+.header-meta .info {
+    padding: 5px;
+    height: 50px;
+    line-height: 1.1em;
+}
+
+.header-meta .info .artist,
+.header-meta .info .title {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    display: block;
+    font-size: 0.9em;
+}
+
+.header-meta .info .artist {
+    font-size: 0.7em;
+    font-style: italic;
+}
+
+.header-meta .time {
+    font-size: 0.7em;
+    height: 30px;
+    padding: 5px;
+}
+
+.header-meta .time .current {
+    width: 40px;
+}
+
+.header-meta .time .slider {
+    display: inline-block;
+    width: calc(100% - 80px);
+    padding: 5px;
+}
+
+.header-meta .time .total {
+    width: 40px;
+    text-align: right;
+    display: inline-block;
+}
+
+.header-controls .buttons {
+    height: 50px;
+}
+
+.header-controls .buttons {
+    float: left;
+    padding-left: 5px;
+}
+
+.header-controls .buttons .player-buttons {
+    text-align: center;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.header-controls .volume {
+    float: left;
+    width: calc(100% - 220px);
+}
+
+.header-controls .volume .slider {
+    display: inline-block;
+    width: calc(100% - 40px);
+}
+
+.btn .fa {
+    box-shadow: 0 0 0.4em #08f;
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    padding: 4px 6px;
+    font-size: 0.8em;
+    margin: 3px;
+}
+
+.btn .fa:hover {
+    box-shadow: 0 0 0.6em #4cdcf5;
+}
+
+.btn .fa.active {
+    box-shadow: 0 0 0.6em #0f8;
+}
+
+.btn .fa-play,
+.btn .fa-pause {
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    font-size: 0.9em;
+}
+
+.btn .fa-play {
+    padding: 8px 10px;
+}
+
+.btn .fa-pause {
+    padding: 8px 9px;
+}
+
+.btn .fa-forward {
+    padding: 4px 7px;
+}
+
+.btn .fa-backward {
+    padding: 4px 4px;
+}
+
+.btn .fa-random {
+    padding: 4px 5px;
+}
+
+.playlist {
+    overflow-y: auto;
+    min-height: 200px;
+    height: calc(100% - 185px);
+}
+
+.playlist .item {
+    display: block;
+    border-bottom: 1px solid rgba(76, 220, 245, 0.2);
+    padding: 5px;
+    height: 30px;
+}
+
+.playlist .item.active {
+    background-color: #0298b3;
+}
+
+.playlist .item .info {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    display: block;
+    width: calc(100% - 50px);
+    float: left;
+    font-size: 0.8em;
+}
+
+.playlist .item .info .title {
+    font-weight: 600;
+}
+
+.playlist .item .info .artist {
+    font-weight: 300;
+    font-style: italic;
+    font-size: 0.7em;
+}
+
+.playlist .item .duration {
+    float: right;
+    font-size: 0.8em;
+}
+
+.footer-btn {
+    position: relative;
+    bottom: -5px;
+    left: 5px;
+}
